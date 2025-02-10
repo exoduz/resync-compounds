@@ -2,22 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import type { Compound } from "./CompoundItem";
 
-import { fetchCompounds } from "../api/compounds";
-import { fetchUsers } from "../api/user";
-import { logout } from "../api/auth";
-
 import CompoundsList from "./CompoundsList";
 import AddCompoundModal from "./AddCompound";
-
-interface User {
-  id: string;
-  username: string;
-}
+import { fetchCompounds } from "../api/compounds";
+import { logout } from "../api/auth";
 
 const List: React.FC = () => {
   const { token, userId, logout: clearAuth } = useAuth();
   const [compounds, setCompounds] = useState<Compound[]>([]);
-  const [sharedUsers, setSharedUsers] = useState<User[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,18 +20,8 @@ const List: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [compoundsData, usersData] = await Promise.all([
-          fetchCompounds(token),
-          fetchUsers(token),
-        ]);
-
-        setCompounds(compoundsData);
-
-        const filteredUsers = usersData.filter(
-          (user: User) => user.id !== userId
-        );
-        setSharedUsers(filteredUsers);
-
+        const data = await fetchCompounds(token);
+        setCompounds(data);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
@@ -48,10 +30,10 @@ const List: React.FC = () => {
       }
     };
 
-    fetchData();
+    if (token) {
+      fetchData();
+    }
   }, [token]);
-
-  console.log(111, sharedUsers);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);

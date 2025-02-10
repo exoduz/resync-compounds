@@ -24,7 +24,7 @@ interface CompoundItemProps {
 }
 
 const CompoundItem: React.FC<CompoundItemProps> = ({
-  compound: Compound,
+  compound,
   sharedWith = { id: "", username: "" },
   onDelete = () => {},
 }) => {
@@ -41,7 +41,6 @@ const CompoundItem: React.FC<CompoundItemProps> = ({
     }
   };
 
-  // Handle case where compound is undefined
   if (!compound) {
     return <p>Loading compound...</p>;
   }
@@ -59,32 +58,12 @@ const CompoundItem: React.FC<CompoundItemProps> = ({
             <strong>Shared with:</strong> {sharedWith.username}
           </>
         )}
-        <div>
-          <button
-            onClick={handleDelete}
-            className="mt-4 bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
-          >
-            Delete
-          </button>
-        </div>
-
-        {isSharing && (
-          <select
-            onChange={handleShare}
-            className="absolute left-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg px-4 py-2"
-          >
-            <option value="">Select a user</option>
-            {sharedUsers.length > 0 ? (
-              sharedUsers.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.username}
-                </option>
-              ))
-            ) : (
-              <option disabled>No users available</option>
-            )}
-          </select>
-        )}
+        <button
+          onClick={handleDelete}
+          className="mt-4 bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
+        >
+          Delete
+        </button>
       </div>
       <div className="flex flex-col items-center justify-between">
         <p className="text-sm text-gray-500 mb-2">
